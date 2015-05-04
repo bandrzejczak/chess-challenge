@@ -1,7 +1,7 @@
 package com.bandrzejczak.chessChallenge
 
+import com.bandrzejczak.chessChallenge.Size._
 import org.scalatest.{Matchers, WordSpec}
-import Size._
 
 class ChessSpec extends WordSpec with Matchers {
 
@@ -63,6 +63,22 @@ class ChessSpec extends WordSpec with Matchers {
         List(Knight(1, 1), Knight(1, 3), Knight(3, 1), Knight(3, 3), Rook(2, 4), Rook(4, 2)),
         List(Knight(2, 2), Knight(2, 4), Knight(4, 2), Knight(4, 4), Rook(1, 3), Rook(3, 1))
       )
+    }
+
+    "win ultimate challenge" in {
+      val figures = Chess.place(
+        List(
+          FigureType.King,
+          FigureType.King,
+          FigureType.Queen,
+          FigureType.Queen,
+          FigureType.Bishop,
+          FigureType.Bishop,
+          FigureType.Knight
+        ),
+        7 x 7
+      )
+      figures.size should (be > 1000000 and be < 5000000)
     }
   }
 

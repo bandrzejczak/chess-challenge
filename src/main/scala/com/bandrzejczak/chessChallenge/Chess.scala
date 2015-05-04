@@ -15,6 +15,10 @@ object Chess {
     }
   }
 
+  /*
+  * TODO Create a cut-off for permutations of existing results,
+  * which will allow to switch back from Set to List
+  */
   def placeFigures(figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = {
     figuresToPlace match {
       case Nil => if(placedFigures.nonEmpty) Set(placedFigures.sorted) else Set()
