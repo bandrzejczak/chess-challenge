@@ -77,6 +77,32 @@ class PiecesSpec extends WordSpec with Matchers {
     }
   }
 
+  "A knight" should {
+
+    val knight = Knight(4, 4)
+    val beatingSquares = List(
+      Square(2, 3),
+      Square(3, 2),
+      Square(2, 5),
+      Square(3, 6),
+      Square(6, 3),
+      Square(5, 2),
+      Square(6, 5),
+      Square(5, 6)
+    )
+
+    "beat in a knight specific way" in {
+      for(s <- beatingSquares)
+        assert(knight beatsOn s)
+    }
+
+    "not beat in other squares" in {
+      for(x <- 1 to 8; y <- 1 to 8)
+        if(!beatingSquares.contains(Square(x,y)))
+          assert(knight doesntBeatOn Square(x,y))
+    }
+  }
+
 }
 
 sealed trait Figure {
@@ -106,4 +132,12 @@ case class Bishop(x: Int, y: Int) extends Figure {
 case class Rook(x: Int, y: Int) extends Figure {
   override def beatsOn(thatSquare: Square): Boolean =
     thisSquare isAlignedWith thatSquare
+}
+
+case class Knight(x: Int, y: Int) extends Figure {
+  override def beatsOn(thatSquare: Square): Boolean = {
+    val xDiff = Math.abs(x - thatSquare.x)
+    val yDiff = Math.abs(y - thatSquare.y)
+    xDiff + yDiff == 3 && Math.abs(xDiff - yDiff) == 1
+  }
 }
