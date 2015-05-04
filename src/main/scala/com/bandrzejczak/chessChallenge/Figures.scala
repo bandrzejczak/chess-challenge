@@ -1,5 +1,7 @@
 package com.bandrzejczak.chessChallenge
 
+import com.bandrzejczak.chessChallenge.FigureType.FigureType
+
 sealed trait Figure {
   val x: Int
   val y: Int
@@ -7,6 +9,16 @@ sealed trait Figure {
 
   def beatsOn(thatSquare: Square) : Boolean
   def doesntBeatOn(thatSquare: Square) : Boolean = !beatsOn(thatSquare)
+}
+
+object Figure {
+  def fromType(figureType: FigureType, position: Square): Figure = figureType match {
+    case FigureType.King => King(position.x, position.y)
+    case FigureType.Queen => Queen(position.x, position.y)
+    case FigureType.Bishop => Bishop(position.x, position.y)
+    case FigureType.Rook => Bishop(position.x, position.y)
+    case FigureType.Knight => Knight(position.x, position.y)
+  }
 }
 
 case class King(x: Int, y: Int) extends Figure {
