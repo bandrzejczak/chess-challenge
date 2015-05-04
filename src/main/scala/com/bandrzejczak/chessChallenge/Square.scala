@@ -3,6 +3,9 @@ package com.bandrzejczak.chessChallenge
 case class Square(x: Int, y: Int) {
   def isAcrossOf(that: Square) : Boolean =
     Math.abs(y-that.y) == Math.abs(x-that.x)
+
+  def isAlignedWith(that: Square) : Boolean =
+    y == that.y || x == that.x
 }
 
 object Square {

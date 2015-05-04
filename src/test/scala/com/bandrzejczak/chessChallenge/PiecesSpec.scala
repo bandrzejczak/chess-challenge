@@ -58,6 +58,25 @@ class PiecesSpec extends WordSpec with Matchers {
     }
   }
 
+  "A rook" should {
+    "beat in x axis" in {
+      val rook = Rook(4, 4)
+      for(x <- 1 to 8)
+        assert(rook beatsOn Square(x, 4))
+    }
+
+    "beat in y axis" in {
+      val rook = Rook(4, 4)
+      for(y <- 1 to 8)
+        assert(rook beatsOn Square(4, y))
+    }
+
+    "not beat in other squares" in {
+      val rook = Rook(6, 4)
+      assert(rook doesntBeatOn Square(3, 1))
+    }
+  }
+
 }
 
 sealed trait Figure {
@@ -76,10 +95,15 @@ case class King(x: Int, y: Int) extends Figure {
 
 case class Queen(x: Int, y: Int) extends Figure {
   override def beatsOn(thatSquare: Square): Boolean =
-    y == thatSquare.y || x == thatSquare.x || (thatSquare isAcrossOf thisSquare)
+    (thisSquare isAlignedWith thatSquare) || (thatSquare isAcrossOf thisSquare)
 }
 
 case class Bishop(x: Int, y: Int) extends Figure {
   override def beatsOn(thatSquare: Square): Boolean =
     thatSquare isAcrossOf thisSquare
+}
+
+case class Rook(x: Int, y: Int) extends Figure {
+  override def beatsOn(thatSquare: Square): Boolean =
+    thisSquare isAlignedWith thatSquare
 }
