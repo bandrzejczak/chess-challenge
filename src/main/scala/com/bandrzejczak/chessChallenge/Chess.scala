@@ -3,8 +3,9 @@ package com.bandrzejczak.chessChallenge
 import com.bandrzejczak.chessChallenge.FigureType.FigureType
 
 object Chess {
-  def place(figuresToPlace: List[FigureType], size: Size) : List[Figure] = {
-    List(Figure.fromType(figuresToPlace.head, Square(1, 1)))
+  def place(figuresToPlace: List[FigureType], size: Size) : List[Figure] = figuresToPlace match {
+    case Nil => Nil
+    case f :: fs => List(Figure.fromType(f, Square(1, 1)))
   }
 }
 
