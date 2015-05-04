@@ -1,6 +1,9 @@
 package com.bandrzejczak.chessChallenge
 
 case class Square(x: Int, y: Int) {
+  require(x > 0)
+  require(y > 0)
+
   def isAcrossOf(that: Square) : Boolean =
     Math.abs(y-that.y) == Math.abs(x-that.x)
 
