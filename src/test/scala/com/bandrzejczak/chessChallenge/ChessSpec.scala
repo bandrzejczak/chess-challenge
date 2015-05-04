@@ -19,6 +19,13 @@ class ChessSpec extends WordSpec with Matchers {
       //then
       figures should contain only King(1, 1)
     }
+
+    "return empty list for unsolvable problem" in {
+      //when
+      val figures = Chess.place(List(FigureType.King, FigureType.Bishop), 1 x 1)
+      //then
+      figures shouldBe empty
+    }
   }
 
 }
