@@ -1,6 +1,6 @@
 package com.bandrzejczak.chessChallenge
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.WordSpec
 
 class FiguresSpec extends WordSpec {
 
