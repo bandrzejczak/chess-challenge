@@ -20,11 +20,17 @@ class ChessSpec extends WordSpec with Matchers {
       figures should contain only King(1, 1)
     }
 
-    "return empty list for unsolvable problem" in {
+    "return throw exception for unsolvable problem" in {
+      intercept[IllegalStateException] {
+        val figures = Chess.place(List(FigureType.King, FigureType.Bishop), 1 x 1)
+      }
+    }
+
+    "place two rooks on 2x2 chessboard" in {
       //when
-      val figures = Chess.place(List(FigureType.King, FigureType.Bishop), 1 x 1)
+      val figures = Chess.place(List(FigureType.Rook, FigureType.Rook), 2 x 2)
       //then
-      figures shouldBe empty
+      figures should contain only (Rook(1,1), Rook(2,2))
     }
   }
 

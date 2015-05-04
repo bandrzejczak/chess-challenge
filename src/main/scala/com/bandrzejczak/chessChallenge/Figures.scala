@@ -9,6 +9,9 @@ sealed trait Figure {
 
   def beatsOn(thatSquare: Square) : Boolean
   def doesntBeatOn(thatSquare: Square) : Boolean = !beatsOn(thatSquare)
+  def doesntBeat(thatFigure: Figure) : Boolean = doesntBeatOn(thatFigure.thisSquare)
+  def doesntBeatAny(figures: List[Figure]) : Boolean =
+    figures forall doesntBeat
 }
 
 object Figure {
@@ -16,7 +19,7 @@ object Figure {
     case FigureType.King => King(position.x, position.y)
     case FigureType.Queen => Queen(position.x, position.y)
     case FigureType.Bishop => Bishop(position.x, position.y)
-    case FigureType.Rook => Bishop(position.x, position.y)
+    case FigureType.Rook => Rook(position.x, position.y)
     case FigureType.Knight => Knight(position.x, position.y)
   }
 }
