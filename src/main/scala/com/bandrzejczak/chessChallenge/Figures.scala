@@ -2,7 +2,7 @@ package com.bandrzejczak.chessChallenge
 
 import com.bandrzejczak.chessChallenge.FigureType.FigureType
 
-sealed trait Figure {
+sealed trait Figure extends Ordered[Figure]{
   val x: Int
   val y: Int
   lazy val thisSquare = Square(x, y)
@@ -12,6 +12,9 @@ sealed trait Figure {
   def doesntBeat(thatFigure: Figure) : Boolean = doesntBeatOn(thatFigure.thisSquare)
   def doesntBeatAny(figures: List[Figure]) : Boolean =
     figures forall doesntBeat
+  def compare(that: Figure) : Int = {
+    toString compare that.toString
+  }
 }
 
 object Figure {
