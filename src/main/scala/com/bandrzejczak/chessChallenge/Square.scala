@@ -1,6 +1,9 @@
 package com.bandrzejczak.chessChallenge
 
-case class Square(x: Int, y: Int)
+case class Square(x: Int, y: Int) {
+  def isAcrossOf(that: Square) : Boolean =
+    Math.abs(y-that.y) == Math.abs(x-that.x)
+}
 
 object Square {
   def generateChessboard(width: Int, height: Int): Seq[Square] = {

@@ -43,22 +43,43 @@ class PiecesSpec extends WordSpec with Matchers {
     }
   }
 
+  "A bishop" should {
+    "beat across" in {
+      val bishop = Bishop(6, 6)
+      for ((x, y) <- (1 to 8) zip (1 to 8))
+        assert(bishop beatsOn Square(x,y))
+      for ((x, y) <- (4 to 8) zip (4 to 8).reverse)
+        assert(bishop beatsOn Square(x,y))
+    }
+
+    "not beat in other squares" in {
+      val bishop = Bishop(6, 4)
+      assert(bishop doesntBeatOn Square(1, 4))
+    }
+  }
+
 }
 
 sealed trait Figure {
   val x: Int
   val y: Int
+  lazy val thisSquare = Square(x, y)
 
-  def beatsOn(square: Square) : Boolean
-  def doesntBeatOn(square: Square) : Boolean = !beatsOn(square)
+  def beatsOn(thatSquare: Square) : Boolean
+  def doesntBeatOn(thatSquare: Square) : Boolean = !beatsOn(thatSquare)
 }
 
 case class King(x: Int, y: Int) extends Figure {
-  override def beatsOn(square: Square) : Boolean =
-    Math.abs(x - square.x) <= 1 && Math.abs(y - square.y) <= 1
+  override def beatsOn(thatSquare: Square) : Boolean =
+    Math.abs(x - thatSquare.x) <= 1 && Math.abs(y - thatSquare.y) <= 1
 }
 
 case class Queen(x: Int, y: Int) extends Figure {
-  override def beatsOn(square: Square): Boolean =
-    y == square.y || x == square.x || (Math.abs(y-square.y) == Math.abs(x-square.x))
+  override def beatsOn(thatSquare: Square): Boolean =
+    y == thatSquare.y || x == thatSquare.x || (thatSquare isAcrossOf thisSquare)
+}
+
+case class Bishop(x: Int, y: Int) extends Figure {
+  override def beatsOn(thatSquare: Square): Boolean =
+    thatSquare isAcrossOf thisSquare
 }
