@@ -33,6 +33,8 @@ class PiecesSpec extends WordSpec with Matchers {
       val queen = Queen(4, 6)
       for ((x, y) <- (1 to 6) zip (3 to 8))
         assert(queen beatsOn Square(x,y))
+      for ((x, y) <- (2 to 7) zip (3 to 8).reverse)
+        assert(queen beatsOn Square(x,y))
     }
 
     "not beat in other squares" in {
@@ -58,5 +60,5 @@ case class King(x: Int, y: Int) extends Figure {
 
 case class Queen(x: Int, y: Int) extends Figure {
   override def beatsOn(square: Square): Boolean =
-    y == square.y || x == square.x || (y-square.y == x-square.x)
+    y == square.y || x == square.x || (Math.abs(y-square.y) == Math.abs(x-square.x))
 }
