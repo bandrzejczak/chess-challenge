@@ -4,42 +4,26 @@ import com.bandrzejczak.chessChallenge.FigureType.FigureType
 
 object Chess {
 
-  def place(figuresToPlace: List[FigureType], size: Size) : Set[List[Figure]] =
-    placeFigures(figuresToPlace, Square.generateChessboard(size.width, size.height), List[Figure]())
-
-  def findPlaceForFigure(figureType: FigureType, squares: Seq[Square], figures: List[Figure]): Seq[Figure] = {
-    squares map {
-      Figure.fromType(figureType, _)
-    } filter {
-      f => f doesntBeatAny figures
-    }
+  def place(figuresToPlace: List[FigureType], size: Size): Iterable[Seq[Figure]] = {
+    figuresToPlace.foldLeft(Map[Seq[Figure], Seq[Square]](List[Figure]() -> Square.generateChessboard(size.width, size.height))) {
+      (resultAggregator, figure) => {
+        for {
+          r <- resultAggregator
+          p <- findPlaceForFigure(figure, r)
+        } yield p
+      }
+    }  map (_._1)
   }
 
-  /*
-  * TODO Create a cut-off for permutations of existing results,
-  * which will allow to switch back from Set to List
-  */
-  def placeFigures(figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = {
-    figuresToPlace match {
-      case Nil => if(placedFigures.nonEmpty) Set(placedFigures.sorted) else Set()
-      case f :: fs =>
-        if(availableSquares.isEmpty) Set()
-        else {
-          findPlaceForFigure(f, availableSquares, placedFigures) match {
-            case Nil => Set()
-            case figures =>
-              figures.foldLeft(Set[List[Figure]]()){
-                (result, branch) =>
-                  result ++ placeFigures(
-                    fs,
-                    availableSquares diff List(branch.thisSquare) filter branch.doesntBeatOn,
-                    branch :: placedFigures
-                  )
-              }
-          }
-        }
-    }
+  def findPlaceForFigure(figureType: FigureType, squares: (Seq[Figure], Seq[Square])): Seq[(Seq[Figure], Seq[Square])] = {
+    for{
+      square <- squares._2
+      figure = Figure.fromType(figureType, square)
+      if figure doesntBeatAny squares._1
+      availableSquares = squares._2 diff List(figure.thisSquare) filter figure.doesntBeatOn
+    } yield (squares._1 :+ figure).sorted -> availableSquares
   }
+
 }
 
 object FigureType extends Enumeration {

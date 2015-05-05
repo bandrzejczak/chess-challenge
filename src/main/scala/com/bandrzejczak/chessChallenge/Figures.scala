@@ -10,7 +10,7 @@ sealed trait Figure extends Ordered[Figure]{
   def beatsOn(thatSquare: Square) : Boolean
   def doesntBeatOn(thatSquare: Square) : Boolean = !beatsOn(thatSquare)
   def doesntBeat(thatFigure: Figure) : Boolean = doesntBeatOn(thatFigure.thisSquare)
-  def doesntBeatAny(figures: List[Figure]) : Boolean =
+  def doesntBeatAny(figures: Seq[Figure]) : Boolean =
     figures forall doesntBeat
   def compare(that: Figure) : Int = {
     toString compare that.toString
