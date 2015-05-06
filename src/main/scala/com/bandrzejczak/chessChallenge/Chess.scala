@@ -29,12 +29,16 @@ object Chess {
   def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = figures match {
     case Nil => Set[List[Figure]]()
     case f :: fs =>
-      val a = placeFigures(
-        figuresToPlace,
-        availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
-        f :: placedFigures
-      )
-      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures) ++ a
+      val newPlacings = if(figuresToPlace.isEmpty){
+        if(f doesntBeatAny placedFigures) Set((f :: placedFigures).sorted) else Set[List[Figure]]()
+      } else {
+        placeFigures(
+          figuresToPlace,
+          availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
+          f :: placedFigures
+        )
+      }
+      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures) ++ newPlacings
   }
 
 }
