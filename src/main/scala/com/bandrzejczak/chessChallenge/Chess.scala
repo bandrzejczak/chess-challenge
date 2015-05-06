@@ -13,23 +13,28 @@ object Chess {
   def placeFigures(figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = {
     if(figuresToPlace.isEmpty) Set(placedFigures.sorted)
     else {
-      for {
-        f <- findPlaceForFigure(figuresToPlace.head, availableSquares, placedFigures)
-        p <- placeFigures(
-          figuresToPlace.tail,
-          availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
-          f :: placedFigures
-        )
-      } yield p
+      val availablePlacings = findPlaceForFigure(figuresToPlace.head, availableSquares, placedFigures)
+      placeEachFigure(availablePlacings, figuresToPlace.tail, availableSquares, placedFigures)
     }
   }
 
-  def findPlaceForFigure(figureType: FigureType, squares: Seq[Square], figures: List[Figure]): Set[Figure] = {
+  def findPlaceForFigure(figureType: FigureType, squares: Seq[Square], figures: List[Figure]): List[Figure] = {
     squares map {
       Figure.fromType(figureType, _)
     } filter {
       f => f doesntBeatAny figures
-    } toSet
+    } toList
+  }
+
+  def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = figures match {
+    case Nil => Set[List[Figure]]()
+    case f :: fs =>
+      val a = placeFigures(
+        figuresToPlace,
+        availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
+        f :: placedFigures
+      )
+      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures) ++ a
   }
 
 }
