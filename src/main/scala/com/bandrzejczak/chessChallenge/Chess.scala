@@ -6,16 +6,19 @@ import scala.language.postfixOps
 
 object Chess {
 
-  def place(figuresToPlace: List[FigureType], size: Size) : Set[List[Figure]] =
-    placeFigures(figuresToPlace, Square.generateChessboard(size.width, size.height), List[Figure]())
-      .filterNot(_.isEmpty)
+  def place(figuresToPlace: List[FigureType], size: Size) : Set[List[Figure]] = figuresToPlace match {
+    case Nil => Set()
+    case _ =>
+      val chessboard = Square.generateChessboard(size.width, size.height)
+      placeFigures(figuresToPlace, chessboard, List[Figure](), List[Figure]())
+  }
 
-  def placeFigures(figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = {
-    if(figuresToPlace.isEmpty) Set(placedFigures.sorted)
-    else {
-      val availablePlacings = findPlaceForFigure(figuresToPlace.head, availableSquares, placedFigures)
-      placeEachFigure(availablePlacings, figuresToPlace.tail, availableSquares, placedFigures)
+  def placeFigures(figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure], usedPlacings: List[Figure]): Set[List[Figure]] = {
+    val x = findPlaceForFigure(figuresToPlace.head, availableSquares, placedFigures)
+    val availablePlacings = x filterNot {
+      f => usedPlacings.contains(f)
     }
+    placeEachFigure(availablePlacings, figuresToPlace.tail, availableSquares, placedFigures, Set[List[Figure]]())
   }
 
   def findPlaceForFigure(figureType: FigureType, squares: Seq[Square], figures: List[Figure]): List[Figure] = {
@@ -26,19 +29,20 @@ object Chess {
     } toList
   }
 
-  def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure]): Set[List[Figure]] = figures match {
+  def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure], dontlookhere: Set[List[Figure]]): Set[List[Figure]] = figures match {
     case Nil => Set[List[Figure]]()
     case f :: fs =>
       val newPlacings = if(figuresToPlace.isEmpty){
-        if(f doesntBeatAny placedFigures) Set((f :: placedFigures).sorted) else Set[List[Figure]]()
+        if(f doesntBeatAny placedFigures) Set(f :: placedFigures) else Set[List[Figure]]()
       } else {
         placeFigures(
           figuresToPlace,
           availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
-          f :: placedFigures
+          f :: placedFigures,
+          (dontlookhere filter (d => (f :: placedFigures).filter(_.figureType == f.figureType).forall(d.contains(_)))).flatten.toList
         )
       }
-      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures) ++ newPlacings
+      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures, newPlacings.map(a => a.filter(_.figureType == f.figureType)) ++ dontlookhere) ++ newPlacings
   }
 
 }
