@@ -12,39 +12,47 @@ object Chess {
     placeFigures(figuresToPlace, chessboard, List[Figure]())
   }
 
-  def findPlaceForFigure(figureType: FigureType, squares: Squares, figures: List[Figure]): List[Figure] = {
-    squares.untried map {
+  def findPlaceForFigure(figureType: FigureType, chessboard: Squares, figures: List[Figure]): List[Figure] = {
+    chessboard.untried map {
       Figure.fromType(figureType, _)
     } filter {
       f => f doesntBeatAny figures
     } toList
   }
 
-  def placeFigures(figuresToPlace: List[FigureType], squares: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
+  def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
     figuresToPlace match {
       case Nil => Set()
       case figure :: figuresRemainder =>
-        val availablePlacings = findPlaceForFigure(figure, squares, placedFigures)
-        investigatePlacings(availablePlacings, figuresRemainder, squares.safe, placedFigures)
+        val availablePlacings = findPlaceForFigure(figure, chessboard, placedFigures)
+        investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures)
     }
 
-  def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], squares: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
+  def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
     figures match {
       case Nil => Set[List[Figure]]()
       case f :: fs =>
-        val newPlacedFigures = f :: placedFigures
-        val newPlacings = if(figuresToPlace.isEmpty){
-          if(f doesntBeatAny placedFigures) Set(newPlacedFigures) else Set[List[Figure]]()
-        } else {
-          placeFigures(
-            figuresToPlace,
-            squares leftAfterPlacing newPlacedFigures,
-            newPlacedFigures
-          )
-        }
-        investigatePlacings(fs, figuresToPlace, squares addTried (newPlacings withFigureTypeSameAs f), placedFigures) ++ newPlacings
+        val solutions = generateSolutions(f, figuresToPlace, chessboard, placedFigures)
+        investigatePlacings(fs, figuresToPlace, chessboard addTried (solutions withFigureTypeSameAs f), placedFigures) ++ solutions
     }
 
+  def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
+    if (figuresToPlace.isEmpty)
+      generateSingleSolution(placedFigures, figure)
+    else
+      placeFigures(
+        figuresToPlace,
+        chessboard leftAfterPlacing (figure :: placedFigures),
+        figure :: placedFigures
+      )
+  }
+
+  def generateSingleSolution(placedFigures: List[Figure], f: Figure): Set[List[Figure]] = {
+    if (f doesntBeatAny placedFigures)
+      Set(f :: placedFigures)
+    else
+      Set[List[Figure]]()
+  }
 }
 
 object FigureType extends Enumeration {
