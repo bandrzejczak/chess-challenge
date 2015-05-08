@@ -29,6 +29,10 @@ package object implicits {
       figures map (_.rotate180deg(size))
     }
 
+    def reflect(size: Size) = {
+      figures map (_.reflect(size))
+    }
+
     implicit class FiguresRotations(figure: Figure) {
       def rotate90deg(size: Size) = {
         import figure.thisSquare._
@@ -40,6 +44,12 @@ package object implicits {
         import figure.thisSquare._
         import size._
         Figure.fromType(figure.figureType, Square(width + 1 - x, height + 1 - y))
+      }
+
+      def reflect(size: Size) = {
+        import figure.thisSquare._
+        import size._
+        Figure.fromType(figure.figureType, Square(width + 1 - x, y))
       }
     }
   }

@@ -28,4 +28,15 @@ class VariantsSpec extends FlatSpec with Matchers {
     )
   }
 
+  it should "be reflected in Y axis" in {
+    //given
+    val figures = List(King(1,1), Rook(3,1), Queen(1,4), Knight(2,2))
+    //when
+    val rotated = figures reflect (4 x 4)
+    //then
+    rotated should contain only (
+      King(4,1), Rook(2,1), Queen(4,4), Knight(3,2)
+    )
+  }
+
 }
