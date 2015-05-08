@@ -53,5 +53,7 @@ package object implicits {
       }
     }
   }
+
+  implicit def fromFigures(figures: List[Figure]): FundamentalSolution = new FundamentalSolution(figures)
   
 }
