@@ -24,12 +24,23 @@ package object implicits {
     def rotate90deg(size: Size) = {
       figures map (_.rotate90deg(size))
     }
-  }
 
-  implicit class FiguresRotations(figure: Figure) {
-    def rotate90deg(size: Size) = {
-      val sourceSquare = figure.thisSquare
-      Figure.fromType(figure.figureType, Square(sourceSquare.y, size.height + 1 - sourceSquare.x))
+    def rotate180deg(size: Size) = {
+      figures map (_.rotate180deg(size))
+    }
+
+    implicit class FiguresRotations(figure: Figure) {
+      def rotate90deg(size: Size) = {
+        import figure.thisSquare._
+        import size._
+        Figure.fromType(figure.figureType, Square(y, height + 1 - x))
+      }
+
+      def rotate180deg(size: Size) = {
+        import figure.thisSquare._
+        import size._
+        Figure.fromType(figure.figureType, Square(width + 1 - x, height + 1 - y))
+      }
     }
   }
   
