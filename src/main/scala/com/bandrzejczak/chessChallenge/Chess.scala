@@ -29,7 +29,7 @@ object Chess {
     } toList
   }
 
-  def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure], dontlookhere: Set[List[Figure]]): Set[List[Figure]] = figures match {
+  def placeEachFigure(figures: List[Figure], figuresToPlace: List[FigureType], availableSquares: Seq[Square], placedFigures: List[Figure], usedPlacings: Set[List[Figure]]): Set[List[Figure]] = figures match {
     case Nil => Set[List[Figure]]()
     case f :: fs =>
       val newPlacings = if(figuresToPlace.isEmpty){
@@ -39,10 +39,10 @@ object Chess {
           figuresToPlace,
           availableSquares diff List(f.thisSquare) filter f.doesntBeatOn,
           f :: placedFigures,
-          (dontlookhere filter (d => (f :: placedFigures).filter(_.figureType == f.figureType).forall(d.contains(_)))).flatten.toList
+          (usedPlacings filter (d => (f :: placedFigures).filter(_.figureType == f.figureType).forall(d.contains(_)))).flatten.toList
         )
       }
-      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures, newPlacings.map(a => a.filter(_.figureType == f.figureType)) ++ dontlookhere) ++ newPlacings
+      placeEachFigure(fs, figuresToPlace, availableSquares, placedFigures, newPlacings.map(a => a.filter(_.figureType == f.figureType)) ++ usedPlacings) ++ newPlacings
   }
 
 }
