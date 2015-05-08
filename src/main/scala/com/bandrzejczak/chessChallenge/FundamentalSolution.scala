@@ -13,7 +13,7 @@ class FundamentalSolution(figures: List[Figure]) {
     }
   }
 
-  def rotate(size: Size): Solutions = {
+  private def rotate(size: Size): Solutions = {
     import size._
     if(width == height)
       rotatingBy90deg(figures, size).take(4).toSet
@@ -21,6 +21,6 @@ class FundamentalSolution(figures: List[Figure]) {
       Set(figures, figures rotate180deg size)
   }
 
-  def rotatingBy90deg(figures: List[Figure], size: Size): Stream[List[Figure]] =
+  private def rotatingBy90deg(figures: List[Figure], size: Size): Stream[List[Figure]] =
     figures #:: rotatingBy90deg(figures rotate90deg size, size)
 }

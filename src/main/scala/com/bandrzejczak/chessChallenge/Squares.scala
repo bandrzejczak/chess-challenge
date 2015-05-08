@@ -1,11 +1,10 @@
 package com.bandrzejczak.chessChallenge
 
-import com.bandrzejczak.chessChallenge.implicits._
+import com.bandrzejczak.chessChallenge.implicits.FiguresList
 
 import scala.language.implicitConversions
 
 class Squares(val safe: Seq[Square], private val triedCombinations: Set[List[Figure]]) {
-
   def untried: Seq[Square] = {
     val triedSquares = triedCombinations.flatten.map(_.thisSquare)
     safe filterNot triedSquares.contains
@@ -21,9 +20,12 @@ class Squares(val safe: Seq[Square], private val triedCombinations: Set[List[Fig
     val newTriedCombinations = triedCombinations ++ relevantSolutions
     new Squares(safe, newTriedCombinations)
   }
+
+  implicit class SquaresSeq(seq: Seq[Square]) {
+    def leftAfterPlacing(figure: Figure): Seq[Square] = seq diff List(figure.thisSquare) filter figure.doesntBeatOn
+  }
 }
 
 object Squares {
   def apply(squares: Seq[Square]) = new Squares(squares, Set[List[Figure]]())
-  implicit def squaresToAvailableSquares(squares: Seq[Square]): Squares = Squares(squares)
 }

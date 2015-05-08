@@ -3,7 +3,16 @@ package com.bandrzejczak.chessChallenge
 import com.bandrzejczak.chessChallenge.Chess.Solutions
 import com.bandrzejczak.chessChallenge.FigureType.FigureType
 
+import scala.language.implicitConversions
+
 package object implicits {
+
+  implicit class SizeBuilder(width: Int){
+    def x(height: Int) = Size(width, height)
+  }
+
+  implicit def squaresListToSquares(squares: Seq[Square]): Squares = Squares(squares)
+
   implicit class FiguresList(list: List[Figure]) {
     def withFigureTypeSameAs(figure: Figure): List[Figure] = withFigureTypeEqual(figure.figureType)
     def withFigureTypeEqual(figureType: FigureType): List[Figure] = list filter (a => figureType == a.figureType)
@@ -14,11 +23,6 @@ package object implicits {
     def withFigureTypeSameAs(figure: Figure): Solutions =
       solutions map (solution => solution withFigureTypeSameAs figure)
   }
-
-  implicit class SquaresSeq(seq: Seq[Square]) {
-    def leftAfterPlacing(figure: Figure): Seq[Square] = seq diff List(figure.thisSquare) filter figure.doesntBeatOn
-  }
-
 
   implicit class ChessboardRotations(figures: List[Figure]) {
     def rotate90deg(size: Size) = {
@@ -33,7 +37,7 @@ package object implicits {
       figures map (_.reflect(size))
     }
 
-    implicit class FiguresRotations(figure: Figure) {
+    private implicit class FiguresRotations(figure: Figure) {
       def rotate90deg(size: Size) = {
         import figure.thisSquare._
         import size._

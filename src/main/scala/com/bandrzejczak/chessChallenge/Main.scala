@@ -1,6 +1,6 @@
 package com.bandrzejczak.chessChallenge
 
-import com.bandrzejczak.chessChallenge.Size._
+import com.bandrzejczak.chessChallenge.implicits._
 
 object Main extends App {
   val figures = Chess.place(

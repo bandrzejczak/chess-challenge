@@ -15,7 +15,7 @@ object Chess {
     placeFigures(figuresToPlace, chessboard, List[Figure]())
   }
 
-  def findPlaceForFigure(figureType: FigureType, chessboard: Squares, figures: List[Figure]): List[Figure] = {
+  private def findPlaceForFigure(figureType: FigureType, chessboard: Squares, figures: List[Figure]): List[Figure] = {
     chessboard.untried map {
       Figure.fromType(figureType, _)
     } filter {
@@ -23,7 +23,7 @@ object Chess {
     } toList
   }
 
-  def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
+  private def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
     figuresToPlace match {
       case Nil => Set()
       case figure :: figuresRemainder =>
@@ -31,7 +31,7 @@ object Chess {
         investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures)
     }
 
-  def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
+  private def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
     figures match {
       case Nil => Solutions()
       case f :: fs =>
@@ -39,7 +39,7 @@ object Chess {
         investigatePlacings(fs, figuresToPlace, chessboard addTried (solutions withFigureTypeSameAs f), placedFigures) ++ solutions
     }
 
-  def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
+  private def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
     if (figuresToPlace.isEmpty)
       generateSingleSolution(figure, placedFigures)
     else
@@ -50,7 +50,7 @@ object Chess {
       )
   }
 
-  def generateSingleSolution(figure: Figure, placedFigures: List[Figure]): Solutions = {
+  private def generateSingleSolution(figure: Figure, placedFigures: List[Figure]): Solutions = {
     if (figure doesntBeatAny placedFigures)
       Set(figure :: placedFigures)
     else
@@ -64,9 +64,3 @@ object FigureType extends Enumeration {
 }
 
 case class Size(width: Int, height: Int)
-
-object Size {
-  implicit class SizeBuilder(width: Int){
-    def x(height: Int) = Size(width, height)
-  }
-}
