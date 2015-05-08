@@ -1,6 +1,6 @@
 package com.bandrzejczak.chessChallenge
 
-import com.bandrzejczak.chessChallenge.Size._
+import com.bandrzejczak.chessChallenge.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
 class ChessSpec extends WordSpec with Matchers {
