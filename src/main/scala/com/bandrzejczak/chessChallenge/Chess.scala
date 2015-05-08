@@ -28,15 +28,15 @@ object Chess {
       case Nil => Set()
       case figure :: figuresRemainder =>
         val availablePlacings = findPlaceForFigure(figure, chessboard, placedFigures)
-        investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures)
+        investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures, Solutions())
     }
 
-  private def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
+  private def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure], solutions: Solutions): Solutions =
     figures match {
-      case Nil => Solutions()
+      case Nil => solutions
       case f :: fs =>
-        val solutions = generateSolutions(f, figuresToPlace, chessboard, placedFigures)
-        investigatePlacings(fs, figuresToPlace, chessboard addTried (solutions withFigureTypeSameAs f), placedFigures) ++ solutions
+        val newSolutions = generateSolutions(f, figuresToPlace, chessboard, placedFigures)
+        investigatePlacings(fs, figuresToPlace, chessboard addTried (newSolutions withFigureTypeSameAs f), placedFigures, solutions ++ newSolutions)
     }
 
   private def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
