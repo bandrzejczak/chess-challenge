@@ -1,5 +1,6 @@
 package com.bandrzejczak.chessChallenge
 
+import com.bandrzejczak.chessChallenge.Chess.Solutions
 import com.bandrzejczak.chessChallenge.FigureType.FigureType
 
 package object implicits {
@@ -9,8 +10,8 @@ package object implicits {
     def hasAllElementsContainedIn(otherList: List[Figure]): Boolean = list forall (otherList.contains(_))
   }
 
-  implicit class SolutionsSet(solutions: Set[List[Figure]]) {
-    def withFigureTypeSameAs(figure: Figure): Set[List[Figure]] =
+  implicit class SolutionsSet(solutions: Solutions) {
+    def withFigureTypeSameAs(figure: Figure): Solutions =
       solutions map (solution => solution withFigureTypeSameAs figure)
   }
 

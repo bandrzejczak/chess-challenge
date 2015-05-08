@@ -6,8 +6,11 @@ import com.bandrzejczak.chessChallenge.implicits._
 import scala.language.{implicitConversions, postfixOps}
 
 object Chess {
+  
+  type Solutions = Set[List[Figure]]
+  def Solutions() = Set[List[Figure]]()
 
-  def place(figuresToPlace: List[FigureType], size: Size) : Set[List[Figure]] = {
+  def place(figuresToPlace: List[FigureType], size: Size) : Solutions = {
     val chessboard = Square.generateChessboard(size.width, size.height)
     placeFigures(figuresToPlace, chessboard, List[Figure]())
   }
@@ -20,7 +23,7 @@ object Chess {
     } toList
   }
 
-  def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
+  def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
     figuresToPlace match {
       case Nil => Set()
       case figure :: figuresRemainder =>
@@ -28,9 +31,9 @@ object Chess {
         investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures)
     }
 
-  def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] =
+  def investigatePlacings(figures: List[Figure], figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
     figures match {
-      case Nil => Set[List[Figure]]()
+      case Nil => Solutions()
       case f :: fs =>
         val solutions = generateSolutions(f, figuresToPlace, chessboard, placedFigures)
         investigatePlacings(fs, figuresToPlace, chessboard addTried (solutions withFigureTypeSameAs f), placedFigures) ++ solutions
@@ -38,7 +41,7 @@ object Chess {
 
   def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
     if (figuresToPlace.isEmpty)
-      generateSingleSolution(placedFigures, figure)
+      generateSingleSolution(figure, placedFigures)
     else
       placeFigures(
         figuresToPlace,
@@ -47,11 +50,11 @@ object Chess {
       )
   }
 
-  def generateSingleSolution(placedFigures: List[Figure], f: Figure): Set[List[Figure]] = {
-    if (f doesntBeatAny placedFigures)
-      Set(f :: placedFigures)
+  def generateSingleSolution(figure: Figure, placedFigures: List[Figure]): Solutions = {
+    if (figure doesntBeatAny placedFigures)
+      Set(figure :: placedFigures)
     else
-      Set[List[Figure]]()
+      Solutions()
   }
 }
 
