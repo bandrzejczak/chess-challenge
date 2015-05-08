@@ -18,4 +18,19 @@ package object implicits {
   implicit class SquaresSeq(seq: Seq[Square]) {
     def leftAfterPlacing(figure: Figure): Seq[Square] = seq diff List(figure.thisSquare) filter figure.doesntBeatOn
   }
+
+
+  implicit class ChessboardRotations(figures: List[Figure]) {
+    def rotate90deg(size: Size) = {
+      figures map (_.rotate90deg(size))
+    }
+  }
+
+  implicit class FiguresRotations(figure: Figure) {
+    def rotate90deg(size: Size) = {
+      val sourceSquare = figure.thisSquare
+      Figure.fromType(figure.figureType, Square(sourceSquare.y, size.height + 1 - sourceSquare.x))
+    }
+  }
+  
 }
