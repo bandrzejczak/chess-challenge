@@ -7,18 +7,22 @@ import scala.language.implicitConversions
 
 class FundamentalSolution(figures: List[Figure]) {
 
+  def generateUniqueVariants(size: Size): Solutions = {
+    generateVariants(size).map(_.sorted).distinct
+  }
+
   def generateVariants(size: Size): Solutions = {
     rotate(size) flatMap {
-      r => Set(r.sorted, (r reflect size).sorted)
+      r => List(r, r reflect size)
     }
   }
 
   private def rotate(size: Size): Solutions = {
     import size._
     if(width == height)
-      rotatingBy90deg(figures, size).take(4).toSet
+      rotatingBy90deg(figures, size).take(4).toList
     else
-      Set(figures, figures rotate180deg size)
+      List(figures, figures rotate180deg size)
   }
 
   private def rotatingBy90deg(figures: List[Figure], size: Size): Stream[List[Figure]] =

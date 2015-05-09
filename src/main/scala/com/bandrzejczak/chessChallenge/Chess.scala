@@ -10,20 +10,38 @@ class Chess(size: Size) {
 
   def place(figuresToPlace: List[FigureType]) : Solutions = {
     val chessboard = Square.generateChessboard(size.width, size.height)
-    placeFigures(figuresToPlace, chessboard, List[Figure]())
+    val t1 = System.currentTimeMillis
+    val fundamentalSolutions = placeFigures(figuresToPlace, chessboard, List[Figure]())
+    val t2 = System.currentTimeMillis
+    println(s"Finding fundamental solutions: ${t2 - t1}ms")
+    val solutions = fundamentalSolutions.par.flatMap {
+      s => s generateUniqueVariants size
+    } distinct
+    val t3 = System.currentTimeMillis
+    println(s"Generating variations: ${t3 - t2}ms")
+    solutions.toList
   }
 
   private def findPlaceForFigure(figureType: FigureType, chessboard: Squares, figures: List[Figure]): List[Figure] = {
-    chessboard.untried map {
+    filterVariations(figures)(chessboard.untried map {
       Figure.fromType(figureType, _)
     } filter {
       f => f doesntBeatAny figures
-    } toList
+    } toList)
+  }
+
+  private def filterVariations(placedFigures: List[Figure])(figures: List[Figure]): List[Figure] = figures match {
+    case Nil => Nil
+    case f :: fs =>
+      val placingsVariants = (f :: placedFigures).generateVariants(size)
+      val variantsForUnchangedPlacedFigures = placingsVariants.filter(_.tail hasAllElementsContainedIn placedFigures)
+      val figureVariants = variantsForUnchangedPlacedFigures.map(_.head)
+      f :: filterVariations(placedFigures)(fs filterNot figureVariants.contains)
   }
 
   private def placeFigures(figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions =
     figuresToPlace match {
-      case Nil => Set()
+      case Nil => Solutions()
       case figure :: figuresRemainder =>
         val availablePlacings = findPlaceForFigure(figure, chessboard, placedFigures)
         investigatePlacings(availablePlacings, figuresRemainder, chessboard.safe, placedFigures, Solutions())
@@ -37,7 +55,7 @@ class Chess(size: Size) {
         investigatePlacings(fs, figuresToPlace, chessboard addTried (newSolutions withFigureTypeSameAs f), placedFigures, solutions ++ newSolutions)
     }
 
-  private def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Set[List[Figure]] = {
+  private def generateSolutions(figure: Figure, figuresToPlace: List[FigureType], chessboard: Squares, placedFigures: List[Figure]): Solutions = {
     if (figuresToPlace.isEmpty)
       generateSingleSolution(figure, placedFigures)
     else
@@ -50,15 +68,15 @@ class Chess(size: Size) {
 
   private def generateSingleSolution(figure: Figure, placedFigures: List[Figure]): Solutions = {
     if (figure doesntBeatAny placedFigures)
-      Set(figure :: placedFigures)
+      List(figure :: placedFigures)
     else
       Solutions()
   }
 }
 
 object Chess {
-  type Solutions = Set[List[Figure]]
-  def Solutions() = Set[List[Figure]]()
+  type Solutions = List[List[Figure]]
+  def Solutions() = List[List[Figure]]()
 }
 
 object FigureType extends Enumeration {

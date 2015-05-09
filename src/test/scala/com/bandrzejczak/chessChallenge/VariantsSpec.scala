@@ -42,7 +42,7 @@ class VariantsSpec extends FlatSpec with Matchers {
     //given
     val figures = List(King(1,1), Rook(3,1), Queen(1,4), Knight(2,2))
     //when
-    val variants = figures generateVariants (4 x 4)
+    val variants = figures generateUniqueVariants(4 x 4)
     //then
     variants should contain theSameElementsAs List(
       List(King(1,1), Knight(2,2), Queen(1,4), Rook(3,1)),
@@ -60,7 +60,7 @@ class VariantsSpec extends FlatSpec with Matchers {
     //given
     val figures = List(King(1,1), King(1,3), Rook(3,2))
     //when
-    val variants = figures generateVariants (3 x 3)
+    val variants = figures generateUniqueVariants (3 x 3)
     //then
     variants should contain theSameElementsAs List(
       List(King(1,1), King(1,3), Rook(3,2)),
@@ -74,7 +74,7 @@ class VariantsSpec extends FlatSpec with Matchers {
     //given
     val figures = List(Rook(1,1), Rook(2,2))
     //when
-    val variants = figures generateVariants (2 x 2)
+    val variants = figures generateUniqueVariants (2 x 2)
     //then
     variants should contain theSameElementsAs List(
       List(Rook(1,1), Rook(2,2)),
