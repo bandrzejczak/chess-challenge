@@ -9,7 +9,7 @@ class FundamentalSolution(figures: List[Figure]) {
 
   def generateVariants(size: Size): Solutions = {
     rotate(size) flatMap {
-      r => Set(r, r reflect size)
+      r => Set(r.sorted, (r reflect size).sorted)
     }
   }
 
