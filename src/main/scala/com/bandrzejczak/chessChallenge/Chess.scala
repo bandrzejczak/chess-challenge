@@ -1,16 +1,14 @@
 package com.bandrzejczak.chessChallenge
 
+import com.bandrzejczak.chessChallenge.Chess.Solutions
 import com.bandrzejczak.chessChallenge.FigureType.FigureType
 import com.bandrzejczak.chessChallenge.implicits._
 
 import scala.language.{implicitConversions, postfixOps}
 
-object Chess {
-  
-  type Solutions = Set[List[Figure]]
-  def Solutions() = Set[List[Figure]]()
+class Chess(size: Size) {
 
-  def place(figuresToPlace: List[FigureType], size: Size) : Solutions = {
+  def place(figuresToPlace: List[FigureType]) : Solutions = {
     val chessboard = Square.generateChessboard(size.width, size.height)
     placeFigures(figuresToPlace, chessboard, List[Figure]())
   }
@@ -56,6 +54,11 @@ object Chess {
     else
       Solutions()
   }
+}
+
+object Chess {
+  type Solutions = Set[List[Figure]]
+  def Solutions() = Set[List[Figure]]()
 }
 
 object FigureType extends Enumeration {
