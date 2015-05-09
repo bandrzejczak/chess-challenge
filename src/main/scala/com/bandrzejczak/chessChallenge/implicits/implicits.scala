@@ -25,32 +25,32 @@ package object implicits {
   }
 
   implicit class ChessboardRotations(figures: List[Figure]) {
-    def rotate90deg(size: Size) = {
-      figures map (_.rotate90deg(size))
+    def rotate90deg(implicit size: Size) = {
+      figures map (_.rotate90deg)
     }
 
-    def rotate180deg(size: Size) = {
-      figures map (_.rotate180deg(size))
+    def rotate180deg(implicit size: Size) = {
+      figures map (_.rotate180deg)
     }
 
-    def reflect(size: Size) = {
-      figures map (_.reflect(size))
+    def reflect(implicit size: Size) = {
+      figures map (_.reflect)
     }
 
     private implicit class FiguresRotations(figure: Figure) {
-      def rotate90deg(size: Size) = {
+      def rotate90deg(implicit size: Size) = {
         import figure.thisSquare._
         import size._
         Figure.fromType(figure.figureType, Square(y, height + 1 - x))
       }
 
-      def rotate180deg(size: Size) = {
+      def rotate180deg(implicit size: Size) = {
         import figure.thisSquare._
         import size._
         Figure.fromType(figure.figureType, Square(width + 1 - x, height + 1 - y))
       }
 
-      def reflect(size: Size) = {
+      def reflect(implicit size: Size) = {
         import figure.thisSquare._
         import size._
         Figure.fromType(figure.figureType, Square(width + 1 - x, y))

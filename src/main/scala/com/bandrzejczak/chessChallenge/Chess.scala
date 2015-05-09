@@ -6,8 +6,10 @@ import com.bandrzejczak.chessChallenge.implicits._
 
 import scala.language.{implicitConversions, postfixOps}
 
-class Chess(size: Size) {
+class Chess(s: Size){
 
+  implicit private val size = s
+  
   def place(figuresToPlace: List[FigureType]) : Solutions = {
     val chessboard = Square.generateChessboard(size.width, size.height)
     val t1 = System.currentTimeMillis
@@ -15,7 +17,7 @@ class Chess(size: Size) {
     val t2 = System.currentTimeMillis
     println(s"Finding fundamental solutions: ${t2 - t1}ms")
     val solutions = fundamentalSolutions.par.flatMap {
-      s => s generateUniqueVariants size
+      s => s generateUniqueVariants
     } distinct
     val t3 = System.currentTimeMillis
     println(s"Generating variations: ${t3 - t2}ms")
@@ -33,7 +35,7 @@ class Chess(size: Size) {
   private def filterVariations(placedFigures: List[Figure])(figures: List[Figure]): List[Figure] = figures match {
     case Nil => Nil
     case f :: fs =>
-      val placingsVariants = (f :: placedFigures).generateVariants(size)
+      val placingsVariants = (f :: placedFigures).generateVariants
       val variantsForUnchangedPlacedFigures = placingsVariants.filter(_.tail hasAllElementsContainedIn placedFigures)
       val figureVariants = variantsForUnchangedPlacedFigures.map(_.head)
       f :: filterVariations(placedFigures)(fs filterNot figureVariants.contains)
