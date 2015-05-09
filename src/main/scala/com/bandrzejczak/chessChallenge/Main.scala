@@ -70,24 +70,28 @@ object Main extends App {
   }
 
   def printSolutions(solutions: Solutions, size: Size): Unit = {
-    val a: List[String] = for {
-      solution <- solutions.toList
-      y <- 1 to size.height
-      x <- 1 to size.width
-    } yield {
-      solution.find(_.thisSquare == Square(x,y)) match {
-        case Some(King(_,_)) => "K"
-        case Some(Queen(_,_)) => "Q"
-        case Some(Bishop(_,_)) => "B"
-        case Some(Rook(_,_)) => "R"
-        case Some(Knight(_,_)) => "k"
-        case None => "."
-      }
-    }
-    a grouped (size.width * size.height) foreach {
-      s =>
-        println()
-        s grouped size.width foreach (l => println(l.mkString(" ")))
+    solutions grouped 10 foreach {
+      solutionsGroup =>
+        (for {
+          solution <- solutionsGroup.toList
+          y <- 1 to size.height
+          x <- 1 to size.width
+        } yield {
+          solution.find(_.thisSquare == Square(x,y)) match {
+            case Some(King(_,_)) => "K"
+            case Some(Queen(_,_)) => "Q"
+            case Some(Bishop(_,_)) => "B"
+            case Some(Rook(_,_)) => "R"
+            case Some(Knight(_,_)) => "k"
+            case None => "."
+          }
+        }) grouped (size.width * size.height) foreach {
+          s =>
+            s grouped size.width foreach (l => println(l.mkString(" ")))
+            println()
+        }
+        println("Press ENTER to continue...")
+        StdIn.readLine()
     }
   }
 
