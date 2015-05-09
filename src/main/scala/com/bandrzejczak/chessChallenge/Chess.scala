@@ -12,7 +12,7 @@ object Chess {
 
   def place(figuresToPlace: List[FigureType], size: Size) : Solutions = {
     val chessboard = Square.generateChessboard(size.width, size.height)
-    placeFigures(figuresToPlace, chessboard, List[Figure]())
+    placeFigures(figuresToPlace.sorted, chessboard, List[Figure]())
   }
 
   private def findPlaceForFigure(figureType: FigureType, chessboard: Squares, figures: List[Figure]): List[Figure] = {
@@ -60,7 +60,11 @@ object Chess {
 
 object FigureType extends Enumeration {
   type FigureType = Value
-  val King, Queen, Bishop, Rook, Knight = Value
+  val King = Value(5)
+  val Queen  = Value(1)
+  val Bishop = Value(2)
+  val Rook = Value(3)
+  val Knight = Value(4)
 }
 
 case class Size(width: Int, height: Int)
